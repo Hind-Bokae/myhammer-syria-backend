@@ -1,14 +1,16 @@
 package com.syriahandwerker.backend.service.impl;
 
 import com.syriahandwerker.backend.dto.UserDTO;
+import com.syriahandwerker.backend.exception.ResourceNotFoundException;
+import com.syriahandwerker.backend.exception.UserAlreadyExistsException;
 import com.syriahandwerker.backend.mapper.UserMapper;
 import com.syriahandwerker.backend.model.User;
 import com.syriahandwerker.backend.repository.UserRepository;
 import com.syriahandwerker.backend.service.UserService;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,13 +33,13 @@ public class UserServiceImpl  implements UserService {
 	public UserDTO findUserById(Long id) {
 		return userRepository.findById(id)
 				.map(userMapper::toDTO)
-				.orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 	}
 	@Override
 	@Transactional
 	public UserDTO registerUser(UserDTO userDTO) {
 		if (userRepository.existsByEmail(userDTO.getEmail())) {
-			throw new RuntimeException("Email is already in use: " + userDTO.getEmail());
+			throw new UserAlreadyExistsException("Email: " + userDTO.getEmail()+ " is already in use");
 		}
 		User user = userMapper.toEntity(userDTO);
 		User savedUser = userRepository.save(user);

@@ -1,10 +1,10 @@
 package com.syriahandwerker.backend.service;
 
 import com.syriahandwerker.backend.dto.UserDTO;
-
 import java.util.List;
 
 public interface UserService {
+	
 	List<UserDTO> findAllUsers();
 	UserDTO findUserById(Long id);
 	UserDTO updateUser(Long id, UserDTO userDTO);
